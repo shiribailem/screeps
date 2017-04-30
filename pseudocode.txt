@@ -1,0 +1,71 @@
+Main Loop:
+	- Per room
+		- Generate costmatrix
+		- If Spawn present
+			- Test for start conditions ( <2 containers, no grunts ) ** Only at start of room
+				- Spawn starter unit ( 1 carry, 1 work, 2 move)
+					- Unit programmed with 3 goals
+						1. keep spawn at 300 energy
+						2. build 2 containers (1 at nearest source, 1 at controller) ** later feature: add automatic placement
+						3. get source container to 600 energy
+			- Test for stage one (>=2 containers, 1 harvester/starter, >= 300 energy in container) ** Permanent stage
+				- Spawn 2 grunts (dynamic move=carry, 0 work), secondary spawn upgrader (max work, 1 carry, 1 move), tertiary spawn builder (work=carry, move to match)
+					- Grunt Goals
+						1. keep spawn full
+						2. Charge Towers
+						3. keep upgrader container full
+						4. fill any non-source containers
+					- Builder Goals
+						1. Repair (Check for towers, if they exist skip unless all build work is done *or* towers are low on power)
+						2. Build
+				- Switch starter unit role to harvester
+				- Maintain 1 harvester for each source/source_container pair (work up 5, 1 carry, 1 move, add more move if work is maxed)
+					- Harvester Goals
+						1. Move to unharvested source
+						2. Harvest
+						3. Fill container
+					- Test for and maintain harvester refresh rate
+				- Cache paths between containers and spawn
+			- Test for stage two (>=1 harvester, >=1 builder, >=2 grunts, >=1 upgrader, no active build projects, memory does not show this step as done) ** Only once
+				- Spawn road construction projects between all containers and source (note in memory for room)
+				- Spawn extension projects?
+				- Spawn tower?
+			- Test for stage three (>=5 extensions, >=1 tower, no active build projects) ** Only at prompt (later might activate automatically to "reclaim")
+				- Wait for user prompt
+					- Spawn claimer
+					- Claim adjacent room
+					- Generate inter-room grunts, harvester, builder, upgraders upon request from "child" room
+		- If Spawn not present
+			- Stage One (nothing present but units)
+				- Request harvester, grunt, builder, upgrader (in that order) from parent room
+			- Stage Two (harvester available)
+				- Harvest source and build container
+			- Stage Three (builder available)
+				- Build container near controller
+				- If grunt present, go to container
+			- Stage Four (all base units available)
+				- Maintain room until Spawn can be created
+
+Starter:
+	- Standard Harvest, Recharge, Build
+
+Harvester:
+	- Move to nearest source with a container and no harvester
+	- Harvest
+	- Transfer to container
+
+Grunt:
+	- Harvest (but with containers rather than sources)
+	- Recharge Spawn / Extensions
+	- Recharge Towers
+	- Recharge Upgrade container
+	- Recharge any extraneous containers * (can put this off)
+
+Builder:
+	- Harvest (but with containers rather than sources)
+	- Repair
+	- Build
+
+Upgrader:
+	- Move to controller
+	- Transfer from container to controller
