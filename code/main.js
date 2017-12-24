@@ -6,7 +6,7 @@ module.exports.loop = function () {
     var spawnRooms = [];
     
     // Iterate over all spawns and their rooms.
-    for (spawnName in Game.spawns) {
+    for (var spawnName in Game.spawns) {
         var spawn = Game.spawns[spawnName];
         var room = spawn.room;
         
